@@ -1,0 +1,9 @@
+com/example/photogalleryapp/SearchActivity.java
+ com.example.photogalleryapp.SearchActivity
+ com.example.photogalleryapp.SearchActivity$1
+ com.example.photogalleryapp.SearchActivity$2
+com/example/photogalleryapp/MainActivity.java
+ com.example.photogalleryapp.MainActivity
+ com.example.photogalleryapp.MainActivity$1
+com/example/photogalleryapp/BuildConfig.java
+ com.example.photogalleryapp.BuildConfig
