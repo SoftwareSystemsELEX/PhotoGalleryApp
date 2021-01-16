@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="editText" type="id" />
+    <item name="btnPrev" type="id" />
+    <item name="btnNext" type="id" />
+    <item name="tvTimestamp" type="id" />
+    <item name="ivGallery" type="id" />
+    <item name="etCaption" type="id" />
 </resources>
