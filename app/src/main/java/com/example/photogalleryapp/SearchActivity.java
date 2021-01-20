@@ -1,50 +1,43 @@
 package com.example.photogalleryapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
+import android.content.Intent; import android.os.Bundle;
+import android.view.View; import android.widget.EditText;
+import java.text.DateFormat; import java.text.SimpleDateFormat;
+import java.util.Calendar; import java.util.Date;
+import java.util.Locale;
 public class SearchActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter);
-
-        // Get the Intent that started this activity and extract the string
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-
-        // Capture the layout's TextView and set the string as its text
-        TextView startTime = findViewById(R.id.starttime);
-        TextView startTime_val = findViewById(R.id.starttimeVal);
-        TextView endTime = findViewById(R.id.endtime);
-        TextView endTime_val = findViewById(R.id.endtimeVal);
-        TextView keyword = findViewById(R.id.Keyword);
-
-        Button cancel = (Button)findViewById(R.id.Cancel);
-        Button ok = (Button)findViewById(R.id.OK);
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-
+        try {
+            Calendar calendar = Calendar.getInstance();
+            DateFormat format = new SimpleDateFormat("yyyy‐MM‐dd");
+            Date now = calendar.getTime();
+            String todayStr = new SimpleDateFormat("yyyy‐MM‐dd", Locale.getDefault()).format(now);
+            Date today = format.parse((String) todayStr);
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            String tomorrowStr = new SimpleDateFormat("yyyy‐MM‐dd", Locale.getDefault()).format( calendar.getTime());
+            Date tomorrow = format.parse((String) tomorrowStr);
+            ((EditText) findViewById(R.id.etFromDateTime)).setText(new SimpleDateFormat(
+                    "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(today));
+            ((EditText) findViewById(R.id.etToDateTime)).setText(new SimpleDateFormat(
+                    "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(tomorrow));
+        } catch (Exception ex) { }
     }
-
-
+    public void cancel(final View v) {
+        finish();
+    }
+    public void go(final View v) {
+        Intent i = new Intent();
+        EditText from = (EditText) findViewById(R.id.etFromDateTime);
+        EditText to = (EditText) findViewById(R.id.etToDateTime);
+        EditText keywords = (EditText) findViewById(R.id.etKeywords);
+        i.putExtra("STARTTIMESTAMP", from.getText() != null ? from.getText().toString() : "");
+        i.putExtra("ENDTIMESTAMP", to.getText() != null ? to.getText().toString() : "");
+        i.putExtra("KEYWORDS", keywords.getText() != null ? keywords.getText().toString() : "");
+        setResult(RESULT_OK, i);
+        finish();
+    }
 }
