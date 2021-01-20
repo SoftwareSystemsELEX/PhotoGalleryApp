@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void scrollPhotos(View v) {
+       updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString());
         switch (v.getId()) {
             case R.id.Left:
                 if (index > 0) {
@@ -104,26 +105,37 @@ public class MainActivity extends AppCompatActivity {
         } else {
             iv.setImageBitmap(BitmapFactory.decodeFile(path));
             String[] attr = path.split("_");
-            tv.setText(attr[1] +"\n" +attr[2]);
-            //tv.setText(attr[2]);
+            tv.setText(attr[3] + " "+attr[2]);//+ " " + attr[2]);// + " "+attr[2]);
+            et.setText(attr[1]);// + " " +attr[2]);
         }
     }
 
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        EditText tt = (EditText) findViewById(R.id.Caption);
+        String imageFileName ="_caption_" + timeStamp + "_";// + tt.getText().toString().toString()+"_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg",storageDir);
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
+    private void updatePhoto(String path, String caption) {
+        String[] attr = path.split("_");
+        if (attr.length >= 3) {
+            File to = new File(attr[0] + "_" + caption + "_" + attr[2] + "_" + attr[3]);
+            File from = new File(path);
+            from.renameTo(to);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data); //this was added
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             ImageView mImageView = (ImageView) findViewById(R.id.imageView);
             mImageView.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
+            photos = findPhotos();
         }
     }
 
