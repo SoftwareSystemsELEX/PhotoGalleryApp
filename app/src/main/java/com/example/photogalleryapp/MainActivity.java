@@ -104,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             iv.setImageBitmap(BitmapFactory.decodeFile(path));
             String[] attr = path.split("_");
-            et.setText(attr[1]);
-            tv.setText(attr[2]);
+            tv.setText(attr[1] +"\n" +attr[2]);
+            //tv.setText(attr[2]);
         }
     }
 
