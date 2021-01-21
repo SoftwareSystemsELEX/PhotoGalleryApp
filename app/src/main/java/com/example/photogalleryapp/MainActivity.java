@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private ArrayList<String> findPhotos(Date startTimestamp, Date endTimestamp, String keywords) {
         File file = new File(Environment.getExternalStorageDirectory()
-                .getAbsolutePath(), "/Android/data/com.example.photogalleryapp/files/Pictures");
+                .getAbsolutePath(), "Android/data/com.example.photogalleryapp/files/Pictures");
         ArrayList<String> photos = new ArrayList<String>();
         File[] fList = file.listFiles();
         if (fList != null) {
@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return photos;
     }
+
     public void scrollPhotos(View v) {
        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString());
         switch (v.getId()) {
@@ -160,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            ImageView mImageView = (ImageView) findViewById(R.id.ivGallery);
+            ImageView mImageView = (ImageView) findViewById(R.id.imageView);
             mImageView.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
             photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "");
         }
