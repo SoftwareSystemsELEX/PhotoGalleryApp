@@ -104,6 +104,7 @@
         android:layout_marginBottom="72dp"
         android:onClick="takePhoto"
         android:text="snap"
+        app:icon="@android:drawable/ic_menu_camera"
         app:layout_constraintBottom_toTopOf="@+id/Filter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

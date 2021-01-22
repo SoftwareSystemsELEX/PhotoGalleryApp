@@ -118,8 +118,7 @@ public class MainActivity extends AppCompatActivity {
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        EditText tt = (EditText) findViewById(R.id.Caption);
-        String imageFileName ="_caption_" + timeStamp + "_";// + tt.getText().toString().toString()+"_";
+        String imageFileName ="JPEG_" + timeStamp + "_";// + tt.getText().toString().toString()+"_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg",storageDir);
         mCurrentPhotoPath = image.getAbsolutePath();
