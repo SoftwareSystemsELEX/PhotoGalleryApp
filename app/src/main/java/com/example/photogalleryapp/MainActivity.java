@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void scrollPhotos(View v) {
        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString());
+
         switch (v.getId()) {
             case R.id.Left:
                 if (index > 0) {
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             iv.setImageBitmap(BitmapFactory.decodeFile(path));
             String[] attr = path.split("_");
-            tv.setText(attr[3] + " "+attr[2]);//+ " " + attr[2]);// + " "+attr[2]);
+            tv.setText(attr[2] + " "+attr[3]);//+ " " + attr[2]);// + " "+attr[2]);
             et.setText(attr[1]);// + " " +attr[2]);
         }
     }
@@ -118,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName ="JPEG_" + timeStamp + "_";// + tt.getText().toString().toString()+"_";
+        String imageFileName ="_JPEG_" + timeStamp + "_";// + tt.getText().toString().toString()+"_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg",storageDir);
         mCurrentPhotoPath = image.getAbsolutePath();
@@ -127,15 +129,19 @@ public class MainActivity extends AppCompatActivity {
     private void updatePhoto(String path, String caption) {
         String[] attr = path.split("_");
         if (attr.length >= 3) {
-            File to = new File(attr[0] + "_" + caption + "_" + attr[2] + "_" + attr[3]);
+            //EditText et = (EditText) findViewById(R.id.Caption);
+            File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ attr[4]);
             File from = new File(path);
             from.renameTo(to);
+            mCurrentPhotoPath = to.getPath();
+            Collections.replaceAll(photos,from.getPath(),mCurrentPhotoPath);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == SEARCH_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 DateFormat format = new SimpleDateFormat("yyyy‐MM‐dd HH:mm:ss");
@@ -160,9 +166,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            photos.add(mCurrentPhotoPath);
             ImageView mImageView = (ImageView) findViewById(R.id.imageView);
             mImageView.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
             photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "");
+            displayPhoto( photos.get(index));
         }
     }
 }
