@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public void search(View view) {
         // Do something in response to button
         Intent intent = new Intent(this, SearchActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent,SEARCH_ACTIVITY_REQUEST_CODE);
     }
     public void takePhoto(View v) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -112,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             iv.setImageBitmap(BitmapFactory.decodeFile(path));
             String[] attr = path.split("_");
-            tv.setText(attr[2] + " "+attr[3]);//+ " " + attr[2]);// + " "+attr[2]);
-            et.setText(attr[1]);// + " " +attr[2]);
+            tv.setText(attr[2] + " "+attr[3]);
+            et.setText(attr[1]);
         }
     }
 
