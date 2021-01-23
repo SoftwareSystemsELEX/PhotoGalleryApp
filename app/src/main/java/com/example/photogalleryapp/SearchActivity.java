@@ -41,6 +41,9 @@ public class SearchActivity extends AppCompatActivity {
         i.putExtra("ENDTIMESTAMP", to.getText() != null ? to.getText().toString() : "");
         i.putExtra("KEYWORDS", keywords.getText() != null ? keywords.getText().toString() : "");
         setResult(RESULT_OK, i);
+       // Intent intent = new Intent(SearchActivity.this,MainActivity.class);
+       // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //startActivityForResult(intent,SEARCH_ACTIVITY_REQUEST_CODE);
         finish();
     }
 }

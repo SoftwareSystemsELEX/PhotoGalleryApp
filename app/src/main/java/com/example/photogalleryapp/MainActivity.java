@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void scrollPhotos(View v) {
        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString());
-
         switch (v.getId()) {
             case R.id.Left:
                 if (index > 0) {
@@ -120,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName ="_JPEG_" + timeStamp + "_";// + tt.getText().toString().toString()+"_";
+        String imageFileName ="_CAPTION_" + timeStamp + "_";// + tt.getText().toString().toString()+"_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg",storageDir);
         mCurrentPhotoPath = image.getAbsolutePath();
@@ -141,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == SEARCH_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 DateFormat format = new SimpleDateFormat("yyyy‐MM‐dd HH:mm:ss");
@@ -156,11 +154,13 @@ public class MainActivity extends AppCompatActivity {
                     endTimestamp = null;
                 }
                 String keywords = (String) data.getStringExtra("KEYWORDS");
+                photos.add(mCurrentPhotoPath);
                 index = 0;
                 photos = findPhotos(startTimestamp, endTimestamp, keywords);
                 if (photos.size() == 0) {
                     displayPhoto(null);
                 } else {
+
                     displayPhoto(photos.get(index));
                 }
             }
@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
             ImageView mImageView = (ImageView) findViewById(R.id.imageView);
             mImageView.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
             photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "");
-            displayPhoto( photos.get(index));
+            displayPhoto(photos.get(index));
         }
     }
 }
