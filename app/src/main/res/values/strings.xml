@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Photo Gallery App</string>
+    <string name="edit_caption">Enter a Caption</string>
+    <string name="button_capture">Capture</string>
+    <string name="button_prev">Prev</string>
+    <string name="button_next">Next</string>
+    <string name="button_filter">Filter</string>
+    <string name="edit_stime">Enter Start Time</string>
+    <string name="edit_etime">Enter End Time</string>
+    <string name="edit_keyword">...</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_ok">OK</string>
+</resources>

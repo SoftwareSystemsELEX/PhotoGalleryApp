@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/etCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="91dp"
+        android:layout_marginLeft="91dp"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="91dp"
+        android:layout_marginRight="91dp"
+        android:layout_marginBottom="38dp"
+        android:ems="10"
+        android:hint="@string/edit_caption"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/snap"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnPrev" />
+
+    <Button
+        android:id="@+id/snap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="145dp"
+        android:layout_marginLeft="145dp"
+        android:layout_marginTop="38dp"
+        android:text="@string/button_capture"
+        android:onClick="takePhoto"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etCaption" />
+
+    <Button
+        android:id="@+id/btnPrev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="300dp"
+        android:text="@string/button_prev"
+        android:onClick="scrollPhotos"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="184dp"
+        android:layout_marginLeft="184dp"
+        android:layout_marginTop="300dp"
+        android:text="@string/button_next"
+        android:onClick="scrollPhotos"
+        app:layout_constraintStart_toEndOf="@+id/btnPrev"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/filterbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="152dp"
+        android:layout_marginLeft="152dp"
+        android:layout_marginTop="92dp"
+        android:text="@string/button_filter"
+        android:onClick="filter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/snap" />
+
+    <ImageView
+        android:id="@+id/ivGallery"
+        android:layout_width="225dp"
+        android:layout_height="195dp"
+        android:layout_marginStart="84dp"
+        android:layout_marginLeft="84dp"
+        android:layout_marginTop="65dp"
+        android:layout_marginEnd="84dp"
+        android:layout_marginRight="84dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvTimestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="168dp"
+        android:layout_marginLeft="168dp"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="168dp"
+        android:layout_marginRight="168dp"
+        android:layout_marginBottom="90dp"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/etCaption"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivGallery" />
+</androidx.constraintlayout.widget.ConstraintLayout>
