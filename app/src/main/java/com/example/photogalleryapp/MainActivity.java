@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
     private void displayPhoto(String path) throws ParseException {
         ImageView iv = (ImageView) findViewById(R.id.imageView);
         TextView tv = (TextView) findViewById(R.id.Timestamp);
+        TextView lo = (TextView) findViewById(R.id.Location);
         EditText et = (EditText) findViewById(R.id.Caption);
         if (path == null || path =="") {
             iv.setImageResource(R.mipmap.ic_launcher);
@@ -124,13 +125,12 @@ public class MainActivity extends AppCompatActivity {
 
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-            Date date1 = format.parse(attr[2].substring(0,3)+"-"+attr[2].substring(4,5)+"-"
-            +attr[2].substring(6,7)+" "+attr[3].substring(0,1)+":"+attr[3].substring(2,3)+":"+attr[3].substring(4,5));
-            String from = new SimpleDateFormat(
-                    "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(date1);
-            tv.setText(from);
-           // tv.setText(attr[2] + " "+attr[3]);
-            et.setText(attr[1]);
+            Date dat = format.parse(attr[2].substring(0,4)+"-"+attr[2].substring(4,6)+"-"+attr[2].substring(6,8)+" "+attr[3].substring(0,2)+":"+attr[3].substring(2,4)+":"+attr[3].substring(4,6));
+            String d = new SimpleDateFormat(
+                    "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(dat);
+           tv.setText(d);
+           et.setText(attr[1]);
+           lo.setText("Burnaby,BC");
         }
     }
 

@@ -4,11 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:alwaysDrawnWithCache="false"
     tools:context=".MainActivity">
-
-    <Button
+    <ImageButton
         android:id="@+id/Right"
-        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="89dp"
         android:layout_height="54dp"
         android:layout_marginTop="14dp"
@@ -16,13 +15,10 @@
         android:layout_marginRight="24dp"
         android:background="@color/white"
         android:onClick="scrollPhotos"
-        android:rotationY="181"
-        app:backgroundTint="@color/white"
-        app:icon="@drawable/abc_vector_test"
-        app:iconTint="@color/purple_700"
+        android:scaleType="fitCenter"
+        android:src="@drawable/right_arrow"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Caption"
-        tools:text="Right" />
+        app:layout_constraintTop_toBottomOf="@+id/Caption" />
 
     <Button
         android:id="@+id/Filter"
@@ -33,13 +29,14 @@
         android:layout_marginBottom="56dp"
         android:onClick="search"
         android:text="Filter"
+        app:backgroundTint="#257EC5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="251dp"
-        android:layout_height="249dp"
+        android:layout_width="338dp"
+        android:layout_height="245dp"
         android:layout_marginTop="65dp"
         android:adjustViewBounds="false"
         android:contentDescription="@string/app_name"
@@ -52,9 +49,8 @@
         app:srcCompat="@drawable/win_20201110_18_20_11_pro"
         tools:visibility="visible" />
 
-    <Button
+    <ImageButton
         android:id="@+id/Left"
-        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="97dp"
         android:layout_height="54dp"
         android:layout_marginStart="16dp"
@@ -62,13 +58,10 @@
         android:layout_marginTop="14dp"
         android:background="@color/white"
         android:onClick="scrollPhotos"
-        app:backgroundTint="#3C3F41"
-        app:backgroundTintMode="add"
-        app:icon="@drawable/abc_vector_test"
-        app:iconTint="@color/purple_700"
+        android:scaleType="fitCenter"
+        android:src="@drawable/left_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Caption"
-        tools:text="Left" />
+        app:layout_constraintTop_toBottomOf="@+id/Caption" />
 
     <TextView
         android:id="@+id/Timestamp"
@@ -82,7 +75,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/Location"
         android:layout_width="73dp"
         android:layout_height="30dp"
         android:layout_marginTop="18dp"
@@ -92,19 +85,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-    <Button
+    <ImageButton
         android:id="@+id/snap"
-        android:layout_width="159dp"
-        android:layout_height="49dp"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="106dp"
+        android:layout_height="100dp"
         android:layout_marginStart="100dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="109dp"
         android:layout_marginEnd="100dp"
         android:layout_marginRight="100dp"
         android:layout_marginBottom="72dp"
+        android:adjustViewBounds="true"
+        android:cropToPadding="true"
         android:onClick="takePhoto"
-        android:text="snap"
-        app:icon="@android:drawable/ic_menu_camera"
+        android:scaleType="centerCrop"
+        android:src="@drawable/camera"
         app:layout_constraintBottom_toTopOf="@+id/Filter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -120,10 +116,10 @@
         android:layout_marginEnd="24dp"
         android:layout_marginRight="24dp"
         android:ems="10"
-        android:text=""
         android:inputType="textPersonName"
+        android:text=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/Location" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

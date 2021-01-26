@@ -41,25 +41,41 @@ public class UITest {
         Date date1 = format.parse("2021-01-20 00:00:00");
         String from = new SimpleDateFormat(
                 "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(date1);
-        Date date2 = format.parse("2021-01-24 00:00:00");
+        Date date2 = format.parse("2021-01-26 00:00:00");
         String to = new SimpleDateFormat(
                 "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(date2);
 
 
         onView(withId(R.id.Filter)).perform(click());
-        onView(withId(R.id.etFromDateTime)).perform(ViewActions.replaceText(from),closeSoftKeyboard());
+//        onView(withId(R.id.etFromDateTime)).perform(ViewActions.replaceText(from),closeSoftKeyboard());
+//
+//        //onView(withId(R.id.etFromDateTime)).perform(typeText(x), closeSoftKeyboard());
+//        onView(withId(R.id.etToDateTime)).perform(ViewActions.replaceText(to), closeSoftKeyboard());
+//        onView(withId(R.id.etKeywords)).perform(typeText("couch"), closeSoftKeyboard());
+//        onView(withId(R.id.OK)).perform(click());
+//        onView(withId(R.id.Caption)).check(matches(withText("couch")));
+//        onView(withId(R.id.Left)).perform(click());
+//        //onView(withId(R.id.Right)).perform(click());
 
+        onView(withId(R.id.etFromDateTime)).perform(ViewActions.replaceText(from),closeSoftKeyboard());
         //onView(withId(R.id.etFromDateTime)).perform(typeText(x), closeSoftKeyboard());
         onView(withId(R.id.etToDateTime)).perform(ViewActions.replaceText(to), closeSoftKeyboard());
-        onView(withId(R.id.etKeywords)).perform(typeText("couch"), closeSoftKeyboard());
+        onView(withId(R.id.etKeywords)).perform(typeText("dog feet"), closeSoftKeyboard());
         onView(withId(R.id.OK)).perform(click());
-        onView(withId(R.id.Caption)).check(matches(withText("couch")));
+        onView(withId(R.id.Caption)).check(matches(withText("dog feet")));
+        onView(withId(R.id.Filter)).perform(click());
+        onView(withId(R.id.etFromDateTime)).perform(ViewActions.replaceText(""),closeSoftKeyboard());
+        onView(withId(R.id.etToDateTime)).perform(ViewActions.replaceText(""), closeSoftKeyboard());
+        onView(withId(R.id.etKeywords)).perform(typeText("TV1"), closeSoftKeyboard());
+        onView(withId(R.id.OK)).perform(click());
+        onView(withId(R.id.Caption)).check(matches(withText("TV1")));
         onView(withId(R.id.Left)).perform(click());
-        //onView(withId(R.id.Right)).perform(click());
+        onView(withId(R.id.Right)).perform(click());
 
     }
 
 
 }
+
 
 
