@@ -1,16 +1,9 @@
 <resources>
     <string name="app_name">PhotoGalleryApp</string>
-    <string name="edit_caption">Enter a Caption</string>
-    <string name="button_capture">Capture</string>
-    <string name="button_prev">Prev</string>
-    <string name="button_next">Next</string>
-    <string name="button_filter">Filter</string>
-    <string name="start_time">Start Time</string>
-    <string name="end_time">End Time</string>
-    <string name="cancel_button">Cancel</string>
-    <string name="okay_button">Okay</string>
-    <string name="keyword">Keyword</string>
-    <string name="enter_text">Enter Text Here</string>
-    <string name="time">Time</string>
-    <string name="location">Location</string>
+    <string name="timeField">Time</string>
+    <string name="locationField">Location</string>
+    <string name="captionField">Enter Caption</string>
+    <string name="keywordField">Keyword</string>
+    <string name="starttimeField">00:00:00</string>
+    <string name="endtimeField">00:00:00</string>
 </resources>

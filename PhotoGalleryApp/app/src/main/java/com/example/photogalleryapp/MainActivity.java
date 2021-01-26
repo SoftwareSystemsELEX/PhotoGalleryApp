@@ -1,170 +1,108 @@
 package com.example.photogalleryapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.view.View;
 import androidx.core.content.FileProvider;
+
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.widget.Button;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-import android.os.Bundle;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
-
-    //Widget extensions
-    android.widget.Button filter_button;
-    android.widget.Button snap_button;
-    android.widget.Button scroll_button1;
-    android.widget.Button scroll_button2;
-    ImageView captureScreen;
-    EditText captionText;
-    android.widget.Button editCaptionButton;
-
-    //Private variables
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int SEARCH_ACTIVITY_REQUEST_CODE = 2 ;
+    String mCurrentPhotoPath;
     private ArrayList<String> photos = null;
     private int index = 0;
-    private int inc = 0;
-    private boolean imageDisplayed = false;
-
-    public static final int REQUEST_IMAGE_CAPTURE = 1;
-    public static final int SEARCH_ACTIVITY_REQUEST = 2;
-    String mCurrentPhotoPath;
-
+    public static final String EXTRA_MESSAGE = "com.example.PhotoGalleryApp.MESSAGE";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Retrieving data from other activities
-        //Intent intent = getIntent();
-        //String Caption = intent.getStringExtra("CAPTION");
-        //String Time = intent.getStringExtra("TIME");
-        Intent refresh = new Intent(MainActivity.this, MainActivity.class);
-
-        filter_button = (Button) findViewById(R.id.filterbutton);
-        snap_button = (Button) findViewById(R.id.snapButton);
-        captureScreen = (ImageView) findViewById(R.id.imageView);
-        scroll_button1 = (Button) findViewById(R.id.next);
-        scroll_button2 = (Button) findViewById(R.id.prev);
-        captionText = (EditText) findViewById(R.id.editCaption);
-        editCaptionButton = (Button) findViewById(R.id.editCaptionButton);
-
-        photos = findPhotos();
-            if (photos.size() == 0) {
+        photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "");
+        if (photos.size() == 0) {
+            try {
                 displayPhoto(null);
-            } else {
-                displayPhoto(photos.get(index));
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-
-        //Filter screen to search for a specific image
-        filter_button.setOnClickListener(new View.OnClickListener() {
-                                             public void onClick(View v) {
-                                                 Intent filter = new Intent(MainActivity.this, SearchActivity.class);
-                                                 startActivityForResult(filter, SEARCH_ACTIVITY_REQUEST);
-                                             }
-                                         }
-        );
-
-        snap_button.setOnClickListener(new View.OnClickListener() {
-                                           public void onClick(View v) {
-                                               Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                               File photoFile = null;
-                                               try {
-                                                   photoFile = createImageFile();
-                                               } catch (IOException e) {
-                                                   e.printStackTrace();
-                                               }
-                                               if(photoFile != null) {
-                                                   Uri photoURI = FileProvider.getUriForFile(MainActivity.this,
-                                                           "com.example.photogalleryapp.fileprovider",
-                                                           photoFile);
-                                                   takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                                   startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                                               }
-                                           }
-                                       }
-        );
-
-        //scroll photos next
-        scroll_button1.setOnClickListener(new View.OnClickListener() {
-                                             public void onClick(View v) {
-                                                 scrollPhotos(0);
-                                             }
-                                         }
-        );
-
-        //scroll photos previous
-        scroll_button2.setOnClickListener(new View.OnClickListener() {
-                                              public void onClick(View v) {
-                                                  scrollPhotos(1);
-                                              }
-                                          }
-        );
-
-        //Edit the caption of the current photo
-        editCaptionButton.setOnClickListener(new View.OnClickListener() {
-                                              public void onClick(View v) {
-                                                  if(inc == 0){
-                                                      captionText.setText("");
-                                                      captionText.setHint("Enter New Caption");
-                                                      editCaptionButton.setText("Save Caption");
-                                                      inc++;
-                                                  }else if(inc == 1){
-                                                      String caption = captionText.getText().toString();
-                                                       String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                                                       String imageFileName = "JPEG_" + timeStamp + "_" + caption + "_";
-                                                       File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                                                       File from = new File(photos.get(index));
-                                                       File to = new File(storageDir, imageFileName);
-                                                       from.renameTo(to);
-                                                       inc = 0;
-                                                       editCaptionButton.setText("Edit Caption");
-                                                       startActivity(refresh);
-                                                  }
-
-
-                                              }
-                                          }
-        );
-
+        } else {
+            try {
+                displayPhoto(photos.get(index));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    private ArrayList<String> findPhotos() {
+    /** Called when the user taps the Send button */
+    public void search(View view) {
+        // Do something in response to button
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivityForResult(intent,SEARCH_ACTIVITY_REQUEST_CODE);
+    }
+    public void takePhoto(View v) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this, "com.example.photogalleryapp.fileprovider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        //}
+    }
+    private ArrayList<String> findPhotos(Date startTimestamp, Date endTimestamp, String keywords) {
         File file = new File(Environment.getExternalStorageDirectory()
-                .getAbsolutePath(), "/Android/data/com.example.photogalleryapp/files/Pictures");
+                .getAbsolutePath(), "Android/data/com.example.photogalleryapp/files/Pictures");
         ArrayList<String> photos = new ArrayList<String>();
         File[] fList = file.listFiles();
         if (fList != null) {
             for (File f : fList) {
-                photos.add(f.getPath());
+                if (((startTimestamp == null && endTimestamp == null) || (f.lastModified() >= startTimestamp.getTime()
+                        && f.lastModified() <= endTimestamp.getTime())
+                ) && (keywords == "" || f.getPath().contains(keywords)))
+                    photos.add(f.getPath());
             }
         }
         return photos;
     }
 
-    public void scrollPhotos(int option) {
-        switch (option) {
-            case 0:
+    public void scrollPhotos(View v) throws ParseException {
+       updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString());
+        switch (v.getId()) {
+            case R.id.Left:
                 if (index > 0) {
                     index--;
                 }
                 break;
-            case 1:
-                if (index < (photos.size() - 1)) {
-                    index++;
-                }
+            case R.id.Right:
+                if (index < (photos.size() -1)) {
+                index++;
+            }
             break;
             default:
                 break;
@@ -172,10 +110,10 @@ public class MainActivity extends AppCompatActivity {
         displayPhoto(photos.get(index));
     }
 
-    private void displayPhoto(String path) {
+    private void displayPhoto(String path) throws ParseException {
         ImageView iv = (ImageView) findViewById(R.id.imageView);
-        TextView tv = (TextView) findViewById(R.id.timeDisplay);
-        EditText et = (EditText) findViewById(R.id.editCaption);
+        TextView tv = (TextView) findViewById(R.id.Timestamp);
+        EditText et = (EditText) findViewById(R.id.Caption);
         if (path == null || path =="") {
             iv.setImageResource(R.mipmap.ic_launcher);
             et.setText("");
@@ -183,56 +121,84 @@ public class MainActivity extends AppCompatActivity {
         } else {
             iv.setImageBitmap(BitmapFactory.decodeFile(path));
             String[] attr = path.split("_");
-            et.setText(attr[3]);
-            tv.setText(attr[1] + "_" + attr[2]);
+
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            Date dat = format.parse(attr[2].substring(0,4)+"-"+attr[2].substring(4,6)+"-"+attr[2].substring(6,8)+" "+attr[3].substring(0,2)+":"+attr[3].substring(2,4)+":"+attr[3].substring(4,6));
+            String d = new SimpleDateFormat(
+                    "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(dat);
+            tv.setText(d);
+           // tv.setText(attr[2] + " "+attr[3]);
+            et.setText(attr[1]);
         }
     }
 
-
-    private File createImageFile() throws IOException{
-        String caption = captionText.getText().toString();
+    private File createImageFile() throws IOException {
+        // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_" + caption + "_";
+        String imageFileName ="_CAPTION_" + timeStamp + "_";// + tt.getText().toString().toString()+"_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        File image = File.createTempFile(imageFileName, ".jpg",storageDir);
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
-
+    private void updatePhoto(String path, String caption) {
+        String[] attr = path.split("_");
+        if (attr.length >= 3) {
+            //EditText et = (EditText) findViewById(R.id.Caption);
+            File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ attr[4]);
+            File from = new File(path);
+            from.renameTo(to);
+            mCurrentPhotoPath = to.getPath();
+            Collections.replaceAll(photos,from.getPath(),mCurrentPhotoPath);
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            captureScreen.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
-            imageDisplayed = true;
-        }else if(requestCode == SEARCH_ACTIVITY_REQUEST && resultCode == RESULT_OK){
-            //Intent intent = getIntent();
-            String Caption = data.getStringExtra("CAPTION");
-            String Time = data.getStringExtra("TIME");
-            if(Caption.isEmpty() == false || Time.isEmpty() == false){
-                for(int i = 0; i < photos.size(); i++) {
-                    String path = photos.get(i);
-                    String[] attr = path.split("_");
-                    if(attr[3].equals(Caption) || attr[1].equals(Time) || attr[2].equals(Time))
-                    {
-                        displayPhoto(photos.get(i));
-                        break;
+        if (requestCode == SEARCH_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                DateFormat format = new SimpleDateFormat("yyyy‐MM‐dd HH:mm:ss");
+                Date startTimestamp , endTimestamp;
+                try {
+                    String from = (String) data.getStringExtra("STARTTIMESTAMP");
+                    String to = (String) data.getStringExtra("ENDTIMESTAMP");
+                    startTimestamp = format.parse(from);
+                    endTimestamp = format.parse(to);
+                } catch (Exception ex) {
+                    startTimestamp = null;
+                    endTimestamp = null;
+                }
+                String keywords = (String) data.getStringExtra("KEYWORDS");
+                photos.add(mCurrentPhotoPath);
+                index = 0;
+                photos = findPhotos(startTimestamp, endTimestamp, keywords);
+                if (photos.size() == 0) {
+                    try {
+                        displayPhoto(null);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        displayPhoto(photos.get(index));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
                 }
             }
         }
-        if(imageDisplayed == true) {
-            Intent refresh = new Intent(MainActivity.this, MainActivity.class);
-            startActivity(refresh);
-            imageDisplayed = false;
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            photos.add(mCurrentPhotoPath);
+            ImageView mImageView = (ImageView) findViewById(R.id.imageView);
+            mImageView.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
+            photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "");
+            try {
+                displayPhoto(photos.get(index));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
-
-
     }
 }
-
-
-
-
-
