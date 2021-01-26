@@ -20,10 +20,12 @@ public class SearchActivity extends AppCompatActivity {
             calendar.add(Calendar.DAY_OF_YEAR, 1);
             String tomorrowStr = new SimpleDateFormat("yyyy‐MM‐dd", Locale.getDefault()).format(calendar.getTime());
             Date tomorrow = format.parse((String) tomorrowStr);
-            ((EditText) findViewById(R.id.etFromDateTime)).setText(new SimpleDateFormat(
-                    "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(today));
-            ((EditText) findViewById(R.id.etToDateTime)).setText(new SimpleDateFormat(
-                    "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(tomorrow));
+            ((EditText) findViewById(R.id.etFromDateTime)).setText("");
+            ((EditText) findViewById(R.id.etToDateTime)).setText("");
+//            ((EditText) findViewById(R.id.etFromDateTime)).setText(new SimpleDateFormat(
+//                    "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(today));
+//            ((EditText) findViewById(R.id.etToDateTime)).setText(new SimpleDateFormat(
+//                    "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(tomorrow));
         } catch (Exception ex) {
         }
     }

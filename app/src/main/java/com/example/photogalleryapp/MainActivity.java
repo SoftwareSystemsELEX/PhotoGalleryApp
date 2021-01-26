@@ -18,10 +18,12 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -36,9 +38,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "");
         if (photos.size() == 0) {
-            displayPhoto(null);
+            try {
+                displayPhoto(null);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         } else {
-            displayPhoto(photos.get(index));
+            try {
+                displayPhoto(photos.get(index));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -81,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         return photos;
     }
 
-    public void scrollPhotos(View v) {
+    public void scrollPhotos(View v) throws ParseException {
        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString());
         switch (v.getId()) {
             case R.id.Left:
@@ -100,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         displayPhoto(photos.get(index));
     }
 
-    private void displayPhoto(String path) {
+    private void displayPhoto(String path) throws ParseException {
         ImageView iv = (ImageView) findViewById(R.id.imageView);
         TextView tv = (TextView) findViewById(R.id.Timestamp);
         EditText et = (EditText) findViewById(R.id.Caption);
@@ -111,7 +121,15 @@ public class MainActivity extends AppCompatActivity {
         } else {
             iv.setImageBitmap(BitmapFactory.decodeFile(path));
             String[] attr = path.split("_");
-            tv.setText(attr[2] + " "+attr[3]);
+
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            Date date1 = format.parse(attr[2].substring(0,3)+"-"+attr[2].substring(4,5)+"-"
+            +attr[2].substring(6,7)+" "+attr[3].substring(0,1)+":"+attr[3].substring(2,3)+":"+attr[3].substring(4,5));
+            String from = new SimpleDateFormat(
+                    "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(date1);
+            tv.setText(from);
+           // tv.setText(attr[2] + " "+attr[3]);
             et.setText(attr[1]);
         }
     }
@@ -158,10 +176,17 @@ public class MainActivity extends AppCompatActivity {
                 index = 0;
                 photos = findPhotos(startTimestamp, endTimestamp, keywords);
                 if (photos.size() == 0) {
-                    displayPhoto(null);
+                    try {
+                        displayPhoto(null);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 } else {
-
-                    displayPhoto(photos.get(index));
+                    try {
+                        displayPhoto(photos.get(index));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -170,7 +195,11 @@ public class MainActivity extends AppCompatActivity {
             ImageView mImageView = (ImageView) findViewById(R.id.imageView);
             mImageView.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
             photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "");
-            displayPhoto(photos.get(index));
+            try {
+                displayPhoto(photos.get(index));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
