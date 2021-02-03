@@ -1,11 +1,20 @@
 package com.example.photogalleryapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,6 +23,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.Task;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,17 +38,20 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LocationListener {
+    public LocationManager locationManager;
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int SEARCH_ACTIVITY_REQUEST_CODE = 2 ;
+    private static final int SEARCH_ACTIVITY_REQUEST_CODE = 2;
     String mCurrentPhotoPath;
     private ArrayList<String> photos = null;
     private int index = 0;
     public static final String EXTRA_MESSAGE = "com.example.PhotoGalleryApp.MESSAGE";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getLocation();
         photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "");
         if (photos.size() == 0) {
             try {
@@ -50,31 +66,35 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
+
     }
 
     /** Called when the user taps the Send button */
     public void search(View view) {
         // Do something in response to button
         Intent intent = new Intent(this, SearchActivity.class);
-        startActivityForResult(intent,SEARCH_ACTIVITY_REQUEST_CODE);
+        startActivityForResult(intent, SEARCH_ACTIVITY_REQUEST_CODE);
     }
+
     public void takePhoto(View v) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this, "com.example.photogalleryapp.fileprovider", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
+        File photoFile = null;
+        try {
+            photoFile = createImageFile();
+        } catch (IOException ex) {
+            // Error occurred while creating the File
+        }
+        // Continue only if the File was successfully created
+        if (photoFile != null) {
+            Uri photoURI = FileProvider.getUriForFile(this, "com.example.photogalleryapp.fileprovider", photoFile);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
         //}
     }
+
     private ArrayList<String> findPhotos(Date startTimestamp, Date endTimestamp, String keywords) {
         File file = new File(Environment.getExternalStorageDirectory()
                 .getAbsolutePath(), "Android/data/com.example.photogalleryapp/files/Pictures");
@@ -92,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void scrollPhotos(View v) throws ParseException {
-       updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString());
+        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString());
         switch (v.getId()) {
             case R.id.Left:
                 if (index > 0) {
@@ -100,10 +120,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.Right:
-                if (index < (photos.size() -1)) {
-                index++;
-            }
-            break;
+                if (index < (photos.size() - 1)) {
+                    index++;
+                }
+                break;
             default:
                 break;
         }
@@ -111,11 +131,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayPhoto(String path) throws ParseException {
+
         ImageView iv = (ImageView) findViewById(R.id.imageView);
         TextView tv = (TextView) findViewById(R.id.Timestamp);
-        TextView lo = (TextView) findViewById(R.id.Location);
+        TextView loc = (TextView) findViewById(R.id.Location);
         EditText et = (EditText) findViewById(R.id.Caption);
-        if (path == null || path =="") {
+
+        if (path == null || path == "") {
             iv.setImageResource(R.mipmap.ic_launcher);
             et.setText("");
             tv.setText("");
@@ -125,19 +147,21 @@ public class MainActivity extends AppCompatActivity {
 
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-            Date dat = format.parse(attr[2].substring(0,4)+"-"+attr[2].substring(4,6)+"-"+attr[2].substring(6,8)+" "+attr[3].substring(0,2)+":"+attr[3].substring(2,4)+":"+attr[3].substring(4,6));
+            Date dat = format.parse(attr[2].substring(0, 4) + "-" + attr[2].substring(4, 6) + "-" + attr[2].substring(6, 8) + " " + attr[3].substring(0, 2) + ":" + attr[3].substring(2, 4) + ":" + attr[3].substring(4, 6));
             String d = new SimpleDateFormat(
                     "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(dat);
-           tv.setText(d);
-           et.setText(attr[1]);
-           lo.setText("Burnaby,BC");
+            tv.setText(d);
+            et.setText(attr[1]);
+//            loc.setText(attr[2);
         }
     }
 
     private File createImageFile() throws IOException {
         // Create an image file name
+        TextView loc = (TextView) findViewById(R.id.Location);
+        String location = loc.getText().toString();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName ="_CAPTION_" + timeStamp + "_";// + tt.getText().toString().toString()+"_";
+        String imageFileName ="_CAPTION_" + timeStamp + "_" + location +"_";// + tt.getText().toString().toString()+"_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg",storageDir);
         mCurrentPhotoPath = image.getAbsolutePath();
@@ -147,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         String[] attr = path.split("_");
         if (attr.length >= 3) {
             //EditText et = (EditText) findViewById(R.id.Caption);
-            File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ attr[4]);
+            File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ attr[4]+"_"+attr[5]);
             File from = new File(path);
             from.renameTo(to);
             mCurrentPhotoPath = to.getPath();
@@ -191,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
             photos.add(mCurrentPhotoPath);
             ImageView mImageView = (ImageView) findViewById(R.id.imageView);
             mImageView.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
@@ -202,4 +227,29 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    @SuppressLint("MissingPermission")
+    private void getLocation() {
+        try{
+            locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, MainActivity.this);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onLocationChanged(Location location) {
+        //Toast.makeText(this, ""+location.getLatitude()+","+location.getLongitude(), Toast.LENGTH_SHORT).show();
+        TextView loc = (TextView) findViewById(R.id.Location);
+        double lat = location.getLatitude();
+        double lon = location.getLongitude();
+        loc.setText("Lat:"+String.valueOf(lat) + " Long:" + String.valueOf(lon));
+        return;
+    }
+
 }
+
+
+
+
+

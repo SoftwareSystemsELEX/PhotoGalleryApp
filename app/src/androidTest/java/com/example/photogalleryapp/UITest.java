@@ -60,9 +60,9 @@ public class UITest {
         onView(withId(R.id.etFromDateTime)).perform(ViewActions.replaceText(from),closeSoftKeyboard());
         //onView(withId(R.id.etFromDateTime)).perform(typeText(x), closeSoftKeyboard());
         onView(withId(R.id.etToDateTime)).perform(ViewActions.replaceText(to), closeSoftKeyboard());
-        onView(withId(R.id.etKeywords)).perform(typeText("dog feet"), closeSoftKeyboard());
+        onView(withId(R.id.etKeywords)).perform(typeText("lights"), closeSoftKeyboard());
         onView(withId(R.id.OK)).perform(click());
-        onView(withId(R.id.Caption)).check(matches(withText("dog feet")));
+        onView(withId(R.id.Caption)).check(matches(withText("lights")));
         onView(withId(R.id.Filter)).perform(click());
         onView(withId(R.id.etFromDateTime)).perform(ViewActions.replaceText(""),closeSoftKeyboard());
         onView(withId(R.id.etToDateTime)).perform(ViewActions.replaceText(""), closeSoftKeyboard());
