@@ -11,15 +11,19 @@ import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +33,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.Task;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -47,12 +52,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private ArrayList<String> photos = null;
     private int index = 0;
     public static final String EXTRA_MESSAGE = "com.example.PhotoGalleryApp.MESSAGE";
+    public Button shareButton;
+    public ImageView ima;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        getLocation();
+        shareButton = (Button) findViewById((R.id.share));
+        ima = (ImageView) findViewById(R.id.imageView);
+
         photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "","","");
         if (photos.size() == 0) {
             try {
@@ -67,6 +78,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 e.printStackTrace();
             }
         }
+
+        shareButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v){
+                image();
+            }
+        });
 
 
     }
@@ -105,7 +123,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             for (File f : fList) {
                 if (((startTimestamp == null && endTimestamp == null) || (f.lastModified() >= startTimestamp.getTime()
                         && f.lastModified() <= endTimestamp.getTime())
-                ) && (keywords == "" || f.getPath().contains(keywords))&&(latitude== "" || f.getPath().contains(latitude))&&(longitude == "" || f.getPath().contains(longitude)))
+                ) && (keywords == "" || f.getPath().contains(keywords))
+                        &&(latitude== "" || f.getPath().contains(latitude))
+                        &&(longitude == "" || f.getPath().contains(longitude)))
                     photos.add(f.getPath());
             }
         }
@@ -113,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     public void scrollPhotos(View v) throws ParseException {
-//        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString());
         updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString());
         switch (v.getId()) {
             case R.id.Left:
@@ -146,9 +165,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         } else {
             iv.setImageBitmap(BitmapFactory.decodeFile(path));
             String[] attr = path.split("_");
-
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
             Date dat = format.parse(attr[2].substring(0, 4) + "-" + attr[2].substring(4, 6) + "-" + attr[2].substring(6, 8) + " " + attr[3].substring(0, 2) + ":" + attr[3].substring(2, 4) + ":" + attr[3].substring(4, 6));
             String d = new SimpleDateFormat(
                     "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(dat);
@@ -230,6 +247,33 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 e.printStackTrace();
             }
         }
+    }
+    private void image(){
+
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+        BitmapDrawable drawable = (BitmapDrawable)ima.getDrawable();
+        Bitmap bitmap = drawable.getBitmap();
+
+        File f = new File(getExternalCacheDir()+"/"+getResources().getString(R.string.app_name)+".png");
+        Intent shareint;
+
+        try{
+            FileOutputStream outputStream = new FileOutputStream(f);
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream);
+
+            outputStream.flush();
+            outputStream.close();
+            shareint = new Intent(Intent.ACTION_SEND);
+            shareint.setType("image/*");
+            shareint.putExtra(Intent.EXTRA_STREAM,Uri.fromFile(f));
+            shareint.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+        startActivity(Intent.createChooser(shareint,"share Image"));
     }
 
     @SuppressLint("MissingPermission")
