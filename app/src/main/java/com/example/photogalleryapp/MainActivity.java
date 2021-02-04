@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.Task;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getLocation();
-        photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "");
+//        getLocation();
+        photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "","","");
         if (photos.size() == 0) {
             try {
                 displayPhoto(null);
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         //}
     }
 
-    private ArrayList<String> findPhotos(Date startTimestamp, Date endTimestamp, String keywords) {
+    private ArrayList<String> findPhotos(Date startTimestamp, Date endTimestamp, String keywords,String latitude, String longitude) {
         File file = new File(Environment.getExternalStorageDirectory()
                 .getAbsolutePath(), "Android/data/com.example.photogalleryapp/files/Pictures");
         ArrayList<String> photos = new ArrayList<String>();
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             for (File f : fList) {
                 if (((startTimestamp == null && endTimestamp == null) || (f.lastModified() >= startTimestamp.getTime()
                         && f.lastModified() <= endTimestamp.getTime())
-                ) && (keywords == "" || f.getPath().contains(keywords)))
+                ) && (keywords == "" || f.getPath().contains(keywords))&&(latitude== "" || f.getPath().contains(latitude))&&(longitude == "" || f.getPath().contains(longitude)))
                     photos.add(f.getPath());
             }
         }
@@ -112,7 +113,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     public void scrollPhotos(View v) throws ParseException {
-        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString());
+//        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString());
+        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString());
         switch (v.getId()) {
             case R.id.Left:
                 if (index > 0) {
@@ -152,7 +154,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(dat);
             tv.setText(d);
             et.setText(attr[1]);
-//            loc.setText(attr[2);
+            loc.setText(attr[4]);
+
         }
     }
 
@@ -167,11 +170,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
-    private void updatePhoto(String path, String caption) {
+    private void updatePhoto(String path, String caption,String latLong) {
         String[] attr = path.split("_");
         if (attr.length >= 3) {
-            //EditText et = (EditText) findViewById(R.id.Caption);
-            File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ attr[4]+"_"+attr[5]);
+            File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ latLong+"_"+attr[5]);
             File from = new File(path);
             from.renameTo(to);
             mCurrentPhotoPath = to.getPath();
@@ -196,9 +198,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     endTimestamp = null;
                 }
                 String keywords = (String) data.getStringExtra("KEYWORDS");
+                String latitude = (String) data.getStringExtra("LATITUDE");
+                String longitude = (String) data.getStringExtra("LONGITUDE");
                 photos.add(mCurrentPhotoPath);
                 index = 0;
-                photos = findPhotos(startTimestamp, endTimestamp, keywords);
+                photos = findPhotos(startTimestamp, endTimestamp, keywords,latitude,longitude);
                 if (photos.size() == 0) {
                     try {
                         displayPhoto(null);
@@ -215,11 +219,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-
+            getLocation();
             photos.add(mCurrentPhotoPath);
             ImageView mImageView = (ImageView) findViewById(R.id.imageView);
             mImageView.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
-            photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "");
+            photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "","","");
             try {
                 displayPhoto(photos.get(index));
             } catch (ParseException e) {
@@ -243,7 +247,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         TextView loc = (TextView) findViewById(R.id.Location);
         double lat = location.getLatitude();
         double lon = location.getLongitude();
-        loc.setText("Lat:"+String.valueOf(lat) + " Long:" + String.valueOf(lon));
+        String strLat = String. format("%.2f", lat);
+        String strLon = String. format("%.2f", lon);
+
+        loc.setText("Lat:"+ strLat + " Long:" + strLon);
+        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString());
         return;
     }
 
