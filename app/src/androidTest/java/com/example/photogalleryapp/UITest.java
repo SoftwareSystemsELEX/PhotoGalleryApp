@@ -45,20 +45,8 @@ public class UITest {
         String to = new SimpleDateFormat(
                 "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(date2);
 
-
         onView(withId(R.id.Filter)).perform(click());
-//        onView(withId(R.id.etFromDateTime)).perform(ViewActions.replaceText(from),closeSoftKeyboard());
-//
-//        //onView(withId(R.id.etFromDateTime)).perform(typeText(x), closeSoftKeyboard());
-//        onView(withId(R.id.etToDateTime)).perform(ViewActions.replaceText(to), closeSoftKeyboard());
-//        onView(withId(R.id.etKeywords)).perform(typeText("couch"), closeSoftKeyboard());
-//        onView(withId(R.id.OK)).perform(click());
-//        onView(withId(R.id.Caption)).check(matches(withText("couch")));
-//        onView(withId(R.id.Left)).perform(click());
-//        //onView(withId(R.id.Right)).perform(click());
-
         onView(withId(R.id.etFromDateTime)).perform(ViewActions.replaceText(from),closeSoftKeyboard());
-        //onView(withId(R.id.etFromDateTime)).perform(typeText(x), closeSoftKeyboard());
         onView(withId(R.id.etToDateTime)).perform(ViewActions.replaceText(to), closeSoftKeyboard());
         onView(withId(R.id.etKeywords)).perform(typeText("lights"), closeSoftKeyboard());
         onView(withId(R.id.OK)).perform(click());
@@ -71,6 +59,17 @@ public class UITest {
         onView(withId(R.id.Caption)).check(matches(withText("TV1")));
         onView(withId(R.id.Left)).perform(click());
         onView(withId(R.id.Right)).perform(click());
+    }
+    @Test
+    public void ensureLocationShareChangesWork() throws InterruptedException, ParseException {
+        onView(withId(R.id.Filter)).perform(click());
+        onView(withId(R.id.etLati)).perform(typeText("67.39"), closeSoftKeyboard());
+        onView(withId(R.id.etLongi)).perform(typeText("125.88"),closeSoftKeyboard());
+        onView(withId(R.id.OK)).perform(click());
+        onView(withId(R.id.Location)).check(matches(withText("Lat:67.39 Long:125.88")));
+        onView(withId(R.id.Left)).perform(click());
+        onView(withId(R.id.Right)).perform(click());
+        onView(withId(R.id.share)).perform(click());
 
     }
 

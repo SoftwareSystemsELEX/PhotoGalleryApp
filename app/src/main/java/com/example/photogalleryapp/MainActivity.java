@@ -82,7 +82,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         shareButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v){
-                image();
+                    image();
+
             }
         });
 
@@ -250,57 +251,21 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
     private void image(){
 
-//        String PACKAGE_NAME = "com.yahoo.mobile.client.android.flickr";
         String PACKAGE_NAME = "com.google.android.gm";
-        try
-        {
-            getPackageManager().getApplicationInfo(PACKAGE_NAME, 0);
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("image/*");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, ((EditText) findViewById(R.id.Caption)).getText().toString());
-            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "" + ((EditText) findViewById(R.id.Caption)).getText().toString());
-            File file = new File(photos.get(index));
-            Uri uri = Uri.fromFile(file);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-            shareIntent.setPackage(PACKAGE_NAME);
-            //startActivity(Intent.createChooser(shareIntent, "Share to"));
-            startActivity(shareIntent);
-
-        }
-        catch (PackageManager.NameNotFoundException e)
-//        catch (Exception ex)
-        {
-            // Twitter not installed
-        }
 
 
-//        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-//        StrictMode.setVmPolicy(builder.build());
-//
-//        BitmapDrawable drawable = (BitmapDrawable)ima.getDrawable();
-//        Bitmap bitmap = drawable.getBitmap();
-//        final File f = new File(photos.get(index)); //changed to jpg
-//
-//        //File f = new File(getExternalCacheDir()+"/"+getResources().getString(R.string.app_name)+".jpg"); //changed to jpg
-//        final Intent shareint;
-//
-//        try{
-//            FileOutputStream outputStream = new FileOutputStream(f);
-//            bitmap.compress(Bitmap.CompressFormat.JPEG,100,outputStream);//changed to JPEG
-//
-//            outputStream.flush();
-//            outputStream.close();
-//            shareint = new Intent(Intent.ACTION_SEND);
-//            shareint.setType("image/*"); //changed
-//
-//            shareint.putExtra(Intent.EXTRA_STREAM,Uri.fromFile(f));
-//            shareint.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//
-//        }catch (Exception e){
-//            throw new RuntimeException(e);
-//        }
-//
-//        startActivity(Intent.createChooser(shareint,"share Image"));
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("image/*");
+        shareIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"sidhubalkaran9@gmail.com"});
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, ((EditText) findViewById(R.id.Caption)).getText().toString());
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "hello. this is a message sent from Photogallery app :-)");
+        //shareIntent.putExtra(Intent.EXTRA_TEXT, ((EditText) findViewById(R.id.Caption)).getText().toString());
+        //shareIntent.putExtra(Intent.EXTRA_SUBJECT, "" + ((EditText) findViewById(R.id.Caption)).getText().toString());
+        Uri fileUri = FileProvider.getUriForFile(this, "com.example.photogalleryapp.fileprovider", new File(photos.get(index)));
+        shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+        shareIntent.setPackage(PACKAGE_NAME);
+        startActivity(Intent.createChooser(shareIntent,"share Image"));
+
     }
 
     @SuppressLint("MissingPermission")
