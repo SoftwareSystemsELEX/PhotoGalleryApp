@@ -19,7 +19,8 @@
         android:scaleType="fitCenter"
         android:src="@drawable/right_arrow"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Caption" />
+        app:layout_constraintTop_toBottomOf="@+id/Caption"
+        android:contentDescription="RightButton" />
 
     <Button
         android:id="@+id/Filter"
@@ -62,7 +63,8 @@
         android:scaleType="fitCenter"
         android:src="@drawable/left_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Caption" />
+        app:layout_constraintTop_toBottomOf="@+id/Caption"
+        android:contentDescription="LeftButton" />
 
     <TextView
         android:id="@+id/Timestamp"
@@ -104,7 +106,8 @@
         app:layout_constraintBottom_toTopOf="@+id/Filter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Caption" />
+        app:layout_constraintTop_toBottomOf="@+id/Caption"
+        android:contentDescription="Camera" />
 
     <EditText
         android:id="@+id/Caption"
@@ -118,9 +121,11 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text=""
+        android:hint="Caption"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Location" />
+        app:layout_constraintTop_toBottomOf="@+id/Location"
+        android:autofillHints="" />
 
     <Button
         android:id="@+id/share"
@@ -128,11 +133,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="66dp"
-        android:layout_marginBottom="56dp"
         android:text="Share"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Left" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/Filter"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

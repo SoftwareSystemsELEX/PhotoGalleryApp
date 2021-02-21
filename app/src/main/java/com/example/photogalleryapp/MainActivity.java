@@ -12,16 +12,23 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 //import android.content.pm.PackageManager;
 //import android.graphics.Bitmap;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 //import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 //import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,9 +50,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
+public class MainActivity extends AppCompatActivity  implements LocationListener {
     public LocationManager locationManager;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int SEARCH_ACTIVITY_REQUEST_CODE = 2;
@@ -57,9 +65,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public ImageView ima;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        Debug.startMethodTracing("onCreate");
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         shareButton = (Button) findViewById((R.id.share));
         ima = (ImageView) findViewById(R.id.imageView);
@@ -78,24 +89,34 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 e.printStackTrace();
             }
         }
-
         shareButton.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View v){
                     image();
-
             }
         });
+//        Debug.stopMethodTracing();
     }
+
+//    @Override
+//    protected void onStop() {
+//        Debug.stopMethodTracing();
+//        super.onStop();
+//    }
+//
+
+
+
 
     /** Called when the user tap    1s the Send button */
     public void search(View view) {
+
         // Do something in response to button
         Intent intent = new Intent(this, SearchActivity.class);
         startActivityForResult(intent, SEARCH_ACTIVITY_REQUEST_CODE);
     }
 
     public void takePhoto(View v) {
+        Debug.startMethodTracing("takePhoto");
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
         File photoFile = null;
@@ -112,6 +133,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
         //}
     }
+
+
+//
+//    protected void onDraw(Canvas canvas){
+//        canvas.drawColor(Color.WHITE);
+//        Paint p = new Paint();
+//        float y = 10;
+//        SparseArray<String> sparseArray = new SparseArray<>();
+//    }
+
 
     private ArrayList<String> findPhotos(Date startTimestamp, Date endTimestamp, String keywords,String latitude, String longitude) {
         File file = new File(Environment.getExternalStorageDirectory()
@@ -231,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         e.printStackTrace();
                     }
                 }
+
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             getLocation();
@@ -243,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+            Debug.stopMethodTracing();
         }
     }
     private void image(){
