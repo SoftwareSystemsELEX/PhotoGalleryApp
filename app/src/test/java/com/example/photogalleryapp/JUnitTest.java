@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 public class JUnitTest {
     @Test
-    public void addition_isCorrect() throws ParseException {
+    public void findPhotos_iscorrect() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         Date date1 = format.parse("2021-01-01 00:00:00");
@@ -32,7 +32,6 @@ public class JUnitTest {
         Date date2 = format.parse("2021-04-26 00:00:00");
         String to = new SimpleDateFormat(
                 "yyyy‐MM‐dd HH:mm:ss", Locale.getDefault()).format(date2);
-
         ArrayList<String> DummyPhotoPaths = new ArrayList(Arrays.asList(
         "Android/data/com.example.photogalleryapp/files/Pictures/_door_20210203_195335_Lat:22.30 Long:11.85_2509275942840573539.jpg",
         "Android/data/com.example.photogalleryapp/files/Pictures/_cat_20210206_165335_Lat:13.30 Long:12.95_2509275942840573531.jpg",
@@ -42,8 +41,6 @@ public class JUnitTest {
         "Android/data/com.example.photogalleryapp/files/Pictures/_swift_20210102_105135_Lat:31.30 Long:14.85_25092759424350573523.jpg",
         "Android/data/com.example.photogalleryapp/files/Pictures/_peas_20200703_125015_Lat:30.30 Long:15.85_250927534534534573533.jpg"
         ));
-//        File [] photos = DummyPhotoPaths.toArray(new File[DummyPhotoPaths.size()]);
-//        System.out.print(photos);
         ArrayList<String> filterPhotos = findPhotos(DummyPhotoPaths, date1,date2,"","","");//"dog","12.30","12.15");
         System.out.print(filterPhotos);
         ArrayList ExpectedList =  new ArrayList(Arrays.asList(
@@ -55,13 +52,8 @@ public class JUnitTest {
                 ));
         assertEquals(ExpectedList, filterPhotos);
     }
-
     public ArrayList<String> findPhotos(ArrayList<String> photopaths ,Date startTimestamp, Date endTimestamp, String keywords, String latitude, String longitude) throws ParseException {
-//        File file = new File(Environment.getExternalStorageDirectory()
-//                .getAbsolutePath(), "Android/data/com.example.photogalleryapp/files/Pictures");
         ArrayList<String> photos = new ArrayList<String>();
-//        File[] fList = file.listFiles();
-
         if (photopaths != null) {
             for (String f : photopaths) {
                 String[] attr = f.split("_");

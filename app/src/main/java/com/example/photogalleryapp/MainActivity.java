@@ -1,26 +1,26 @@
 package com.example.photogalleryapp;
 
-import androidx.annotation.NonNull;
+//import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+//import androidx.core.app.ActivityCompat;
+//import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
-import android.Manifest;
+//import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.ActivityNotFoundException;
+//import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
+//import android.content.pm.PackageManager;
+//import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
+//import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
+//import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
@@ -28,15 +28,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.Task;
+//import com.google.android.gms.location.FusedLocationProviderClient;
+//import com.google.android.gms.location.LocationServices;
+//import com.google.android.gms.tasks.Task;
 
 import java.io.File;
-import java.io.FileOutputStream;
+//import java.io.FileOutputStream;
+import java.io.IOError;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
+//import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,8 +47,8 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
     public LocationManager locationManager;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int SEARCH_ACTIVITY_REQUEST_CODE = 2;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int SEARCH_ACTIVITY_REQUEST_CODE = 2;
     String mCurrentPhotoPath;
     private ArrayList<String> photos = null;
     private int index = 0;
@@ -60,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        getLocation();
         shareButton = (Button) findViewById((R.id.share));
         ima = (ImageView) findViewById(R.id.imageView);
 
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         TextView loc = (TextView) findViewById(R.id.Location);
         String location = loc.getText().toString();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName ="_CAPTION_" + timeStamp + "_" + location +"_";// + tt.getText().toString().toString()+"_";
+        String imageFileName ="_CAPTION_" + timeStamp + "_" + location +"_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg",storageDir);
         mCurrentPhotoPath = image.getAbsolutePath();
@@ -192,16 +192,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ latLong+"_"+attr[5]);
             File from = new File(path);
             from.renameTo(to);
-            mCurrentPhotoPath = to.getPath();
-            Collections.replaceAll(photos,from.getPath(),mCurrentPhotoPath);
+            mCurrentPhotoPath = to.getAbsolutePath();
+            Collections.replaceAll(photos,from.getAbsolutePath(),mCurrentPhotoPath);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SEARCH_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
+        if (requestCode == SEARCH_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
                 DateFormat format = new SimpleDateFormat("yyyy‐MM‐dd HH:mm:ss");
                 Date startTimestamp , endTimestamp;
                 try {
@@ -232,7 +231,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         e.printStackTrace();
                     }
                 }
-            }
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             getLocation();
@@ -255,8 +253,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         shareIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"sidhubalkaran9@gmail.com"});
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, ((EditText) findViewById(R.id.Caption)).getText().toString());
         shareIntent.putExtra(Intent.EXTRA_TEXT, "hello. this is a message sent from Photogallery app :-)");
-        //shareIntent.putExtra(Intent.EXTRA_TEXT, ((EditText) findViewById(R.id.Caption)).getText().toString());
-        //shareIntent.putExtra(Intent.EXTRA_SUBJECT, "" + ((EditText) findViewById(R.id.Caption)).getText().toString());
         Uri fileUri = FileProvider.getUriForFile(this, "com.example.photogalleryapp.fileprovider", new File(photos.get(index)));
         shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
         shareIntent.setPackage(PACKAGE_NAME);
@@ -275,13 +271,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
     @Override
     public void onLocationChanged(Location location) {
-        //Toast.makeText(this, ""+location.getLatitude()+","+location.getLongitude(), Toast.LENGTH_SHORT).show();
         TextView loc = (TextView) findViewById(R.id.Location);
-        double lat = location.getLatitude();
-        double lon = location.getLongitude();
-        String strLat = String. format("%.2f", lat);
-        String strLon = String. format("%.2f", lon);
-
+        double lat = location.getLatitude(),lon = location.getLongitude();
+        String strLat = String. format("%.2f", lat),strLon = String. format("%.2f", lon);
         loc.setText("Lat:"+ strLat + " Long:" + strLon);
         updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString());
         return;

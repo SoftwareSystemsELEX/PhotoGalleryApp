@@ -2,8 +2,4 @@
     <string name="app_name">PhotoGalleryApp</string>
     <string name="timeField">Time</string>
     <string name="locationField">Location</string>
-    <string name="captionField">Enter Caption</string>
-    <string name="keywordField">Keyword</string>
-    <string name="starttimeField">00:00:00</string>
-    <string name="endtimeField">00:00:00</string>
 </resources>
