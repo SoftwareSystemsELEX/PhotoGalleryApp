@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 
-public class JUnitTest {
+public class aaJUnitTest {
     @Test
     public void findPhotos_iscorrect() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
