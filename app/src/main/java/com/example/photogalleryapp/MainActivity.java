@@ -86,11 +86,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             }
         });
-
-
     }
 
-    /** Called when the user taps the Send button */
+    /** Called when the user tap    1s the Send button */
     public void search(View view) {
         // Do something in response to button
         Intent intent = new Intent(this, SearchActivity.class);
@@ -252,8 +250,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private void image(){
 
         String PACKAGE_NAME = "com.google.android.gm";
-
-
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("image/*");
         shareIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"sidhubalkaran9@gmail.com"});
