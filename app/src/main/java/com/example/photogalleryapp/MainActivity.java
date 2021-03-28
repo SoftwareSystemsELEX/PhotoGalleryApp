@@ -9,26 +9,29 @@ import androidx.core.content.FileProvider;
 //import android.Manifest;
 import android.annotation.SuppressLint;
 //import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 //import android.content.pm.PackageManager;
 //import android.graphics.Bitmap;
-import android.graphics.Bitmap;
+//import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 //import android.graphics.drawable.BitmapDrawable;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
+//import android.graphics.Canvas;
+//import android.graphics.Color;
+//import android.graphics.Paint;
+//import android.graphics.Point;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Debug;
+//import android.os.Debug;
 import android.os.Environment;
 //import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.util.SparseArray;
+//import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,7 +44,7 @@ import android.widget.TextView;
 
 import java.io.File;
 //import java.io.FileOutputStream;
-import java.io.IOError;
+//import java.io.IOError;
 import java.io.IOException;
 import java.text.DateFormat;
 //import java.text.DecimalFormat;
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        Debug.startMethodTracing("onCreate");
+//      Debug.startMethodTracing("onCreate");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -116,7 +119,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     }
 
     public void takePhoto(View v) {
-        Debug.startMethodTracing("takePhoto");
+//        Debug.startMethodTracing("takePhoto");
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
         File photoFile = null;
@@ -202,7 +205,6 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             tv.setText(d);
             et.setText(attr[1]);
             loc.setText(attr[4]);
-
         }
     }
 
@@ -226,6 +228,25 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             mCurrentPhotoPath = to.getAbsolutePath();
             Collections.replaceAll(photos,from.getAbsolutePath(),mCurrentPhotoPath);
         }
+    }
+
+
+    public void deletePhoto(View v) throws ParseException {
+        ImageView iv = (ImageView) findViewById(R.id.imageView);
+        View snap= findViewById(R.id.imageButton);
+        String photo = photos.get(index);
+        File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File deleteFile = new File(photo);
+        boolean deleted = deleteFile.delete();
+        photos.remove(index);
+        if(photos.size()>0)
+            displayPhoto(photos.get(index));
+        else{
+            displayPhoto(null);
+//            snap.performClick();
+
+        }
+
     }
 
     @Override
@@ -275,11 +296,10 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            Debug.stopMethodTracing();
+//            Debug.stopMethodTracing();
         }
     }
     private void image(){
-
         String PACKAGE_NAME = "com.google.android.gm";
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("image/*");
@@ -296,7 +316,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     @SuppressLint("MissingPermission")
     private void getLocation() {
         try{
-            locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, MainActivity.this);
         }catch(Exception e){
             e.printStackTrace();
@@ -306,8 +326,23 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     public void onLocationChanged(Location location) {
         TextView loc = (TextView) findViewById(R.id.Location);
         double lat = location.getLatitude(),lon = location.getLongitude();
-        String strLat = String. format("%.2f", lat),strLon = String. format("%.2f", lon);
-        loc.setText("Lat:"+ strLat + " Long:" + strLon);
+
+        String cityName = null;
+        Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = gcd.getFromLocation(lat,
+                    lon, 1);
+            if (addresses.size() > 0) {
+//                System.out.println(addresses.get(0).getLocality());
+                cityName = addresses.get(0).getLocality();
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        loc.setText("City: "+ cityName);
         updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString());
         return;
     }

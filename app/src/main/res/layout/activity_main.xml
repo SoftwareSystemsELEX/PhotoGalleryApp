@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:alwaysDrawnWithCache="false"
+    android:onClick="scrollPhotos"
     tools:context=".MainActivity">
 
     <ImageButton
@@ -15,12 +16,12 @@
         android:layout_marginEnd="24dp"
         android:layout_marginRight="24dp"
         android:background="@color/white"
+        android:contentDescription="RightButton"
         android:onClick="scrollPhotos"
         android:scaleType="fitCenter"
         android:src="@drawable/right_arrow"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Caption"
-        android:contentDescription="RightButton" />
+        app:layout_constraintTop_toBottomOf="@+id/Caption" />
 
     <Button
         android:id="@+id/Filter"
@@ -59,12 +60,12 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="14dp"
         android:background="@color/white"
+        android:contentDescription="LeftButton"
         android:onClick="scrollPhotos"
         android:scaleType="fitCenter"
         android:src="@drawable/left_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Caption"
-        android:contentDescription="LeftButton" />
+        app:layout_constraintTop_toBottomOf="@+id/Caption" />
 
     <TextView
         android:id="@+id/Timestamp"
@@ -89,6 +90,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <ImageButton
+        android:id="@+id/imageButton"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="106dp"
         android:layout_height="100dp"
@@ -99,6 +101,7 @@
         android:layout_marginRight="100dp"
         android:layout_marginBottom="72dp"
         android:adjustViewBounds="true"
+        android:contentDescription="Camera"
         android:cropToPadding="true"
         android:onClick="takePhoto"
         android:scaleType="centerCrop"
@@ -106,8 +109,7 @@
         app:layout_constraintBottom_toTopOf="@+id/Filter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Caption"
-        android:contentDescription="Camera" />
+        app:layout_constraintTop_toBottomOf="@+id/Caption" />
 
     <EditText
         android:id="@+id/Caption"
@@ -118,14 +120,14 @@
         android:layout_marginTop="72dp"
         android:layout_marginEnd="24dp"
         android:layout_marginRight="24dp"
+        android:autofillHints=""
         android:ems="10"
+        android:hint="Caption"
         android:inputType="textPersonName"
         android:text=""
-        android:hint="Caption"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Location"
-        android:autofillHints="" />
+        app:layout_constraintTop_toBottomOf="@+id/Location" />
 
     <Button
         android:id="@+id/share"
@@ -136,5 +138,22 @@
         android:text="Share"
         app:layout_constraintBaseline_toBaselineOf="@+id/Filter"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="163dp"
+        android:layout_marginLeft="163dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="160dp"
+        android:layout_marginRight="160dp"
+        android:layout_marginBottom="9dp"
+        android:onClick="deletePhoto"
+        android:text="Delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
