@@ -20,6 +20,7 @@
         android:layout_marginEnd="27dp"
         android:layout_marginRight="27dp"
         android:text="From: "
+        android:hint="From: "
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/etFromDateTime"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,11 +38,13 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:ems="10"
+        android:hint="YYYY-MM-DD HH:MM:SS"
         android:inputType="date"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/tvToDateTime"
@@ -54,8 +57,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="72dp"
         android:layout_marginEnd="37dp"
-        android:layout_marginRight="37dp"
         android:text="To: "
+        android:layout_marginRight="37dp"
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/etToDateTime"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,11 +76,13 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:ems="10"
+        android:hint="YYYY-MM-DD HH:MM:SS"
         android:inputType="date"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etFromDateTime"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/tvKeywords"
@@ -110,13 +115,16 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="77dp"
+        android:hint="Keyword"
         android:ems="10"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/Cancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvKeywords"
         app:layout_constraintTop_toBottomOf="@+id/etLongi"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        android:inputType="text"
+        android:autofillHints="" />
 
     <Button
         android:id="@+id/Cancel"
@@ -171,7 +179,8 @@
         app:layout_constraintBottom_toTopOf="@+id/etKeywords"
         app:layout_constraintStart_toEndOf="@+id/Loco"
         app:layout_constraintTop_toBottomOf="@+id/etToDateTime"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/etLongi"
@@ -185,7 +194,8 @@
         android:inputType="textPersonName"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etToDateTime" />
+        app:layout_constraintTop_toBottomOf="@+id/etToDateTime"
+        android:autofillHints="" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
