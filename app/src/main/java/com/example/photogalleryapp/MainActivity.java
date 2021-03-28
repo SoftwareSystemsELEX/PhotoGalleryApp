@@ -26,6 +26,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 //import android.os.Debug;
 import android.os.Environment;
@@ -42,10 +43,18 @@ import android.widget.TextView;
 //import com.google.android.gms.location.LocationServices;
 //import com.google.android.gms.tasks.Task;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 //import java.io.FileOutputStream;
 //import java.io.IOError;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 //import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -64,19 +73,98 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     private ArrayList<String> photos = null;
     private int index = 0;
     public static final String EXTRA_MESSAGE = "com.example.PhotoGalleryApp.MESSAGE";
-    public Button shareButton;
-    public ImageView ima;
+//    public Button shareButton;
+//    public ImageView ima;
 
 
 
+
+    class Weather extends AsyncTask<String, Void, String> { //First stream means URL, void is nothing, third string means return type will be String
+
+        public String searchWeather(String location){
+            String content;
+            Weather weather = new Weather();
+            TextView weatherDisplay = findViewById(R.id.weather);
+            String fullWeather="";
+            try {
+                content = weather.execute("https://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=84b00d028b446f75b2dfcf13744a9964").get();
+                //First check data is retreived successfully
+
+
+                //JSON
+                JSONObject jsonObject = new JSONObject(content);
+                String weatherData = jsonObject.getString("weather");
+                String mainTemperature = jsonObject.getString("main"); //Temperature
+
+
+                //weather data is in array
+                JSONArray array = new JSONArray(weatherData);
+
+                String main = "";
+                String description = "";
+                String temperatureKelvin = "";
+
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject weatherPart = array.getJSONObject(i);
+                    main = weatherPart.getString("main");
+                    description = weatherPart.getString("description");
+                }
+
+                JSONObject mainPart = new JSONObject(mainTemperature);
+                temperatureKelvin = mainPart.getString("temp");
+                Double temp = new Double(temperatureKelvin);
+                temp = temp - 273.15;
+                String temperatureCelcius = String.format("%.2f", temp);
+
+                fullWeather = "Main:" + main + "\nDescription: " + description + "\nTemperature: " + temperatureCelcius + "Celcius";
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return fullWeather;
+        }
+        @Override
+        protected String doInBackground(String... address) {
+            //String... means multiple address can be sent, it acts as an array
+            try {
+                URL url = new URL(address[0]);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.connect();
+
+                InputStream is = connection.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+
+                int data = isr.read();
+                String content = "";
+                char ch;
+                while (data != -1){
+                    ch = (char) data;
+                    content = content + ch;
+                    data = isr.read();
+
+                }
+                return content;
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //      Debug.startMethodTracing("onCreate");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        shareButton = (Button) findViewById((R.id.share));
-        ima = (ImageView) findViewById(R.id.imageView);
+        Weather displayWeather = new Weather();
+
+//        shareButton = (Button) findViewById((R.id.share));
+//        ima = (ImageView) findViewById(R.id.imageView);
 
         photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "","","");
         if (photos.size() == 0) {
@@ -92,11 +180,11 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
                 e.printStackTrace();
             }
         }
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v){
-                    image();
-            }
-        });
+//        shareButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v){
+//                    image();
+//            }
+//        });
 //        Debug.stopMethodTracing();
     }
 
@@ -166,7 +254,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     }
 
     public void scrollPhotos(View v) throws ParseException {
-        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString());
+        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString(),((TextView) findViewById(R.id.weather)).getText().toString());
         switch (v.getId()) {
             case R.id.Left:
                 if (index > 0) {
@@ -211,18 +299,20 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     private File createImageFile() throws IOException {
         // Create an image file name
         TextView loc = (TextView) findViewById(R.id.Location);
+        TextView weatherDisplay = findViewById(R.id.weather);
         String location = loc.getText().toString();
+        String weather = weatherDisplay.getText().toString();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName ="_CAPTION_" + timeStamp + "_" + location +"_";
+        String imageFileName ="_CAPTION_" + timeStamp + "_" + location +"_"+ weather+"_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg",storageDir);
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
-    private void updatePhoto(String path, String caption,String latLong) {
+    private void updatePhoto(String path, String caption,String latLong,String weather) {
         String[] attr = path.split("_");
         if (attr.length >= 3) {
-            File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ latLong+"_"+attr[5]);
+            File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ latLong+"_"+weather+"_"+attr[6]);
             File from = new File(path);
             from.renameTo(to);
             mCurrentPhotoPath = to.getAbsolutePath();
@@ -299,7 +389,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
 //            Debug.stopMethodTracing();
         }
     }
-    private void image(){
+    public void share(View v){
         String PACKAGE_NAME = "com.google.android.gm";
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("image/*");
@@ -325,6 +415,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     @Override
     public void onLocationChanged(Location location) {
         TextView loc = (TextView) findViewById(R.id.Location);
+        TextView weatherDisplay = findViewById(R.id.weather);
         double lat = location.getLatitude(),lon = location.getLongitude();
 
         String cityName = null;
@@ -341,9 +432,11 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         catch (IOException e) {
             e.printStackTrace();
         }
-
         loc.setText("City: "+ cityName);
-        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString());
+        Weather displayWeather = new Weather();
+        String weather = displayWeather.searchWeather(cityName);
+        weatherDisplay.setText(weather);
+        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString(),weather);
         return;
     }
 
