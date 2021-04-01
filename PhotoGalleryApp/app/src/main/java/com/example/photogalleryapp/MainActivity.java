@@ -70,18 +70,14 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     public LocationManager locationManager;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int SEARCH_ACTIVITY_REQUEST_CODE = 2;
-    private static int REQUEST_VIDEO_CAPTURE = 100;
+    private static int REQUEST_VIDEO_CAPTURE = 3;
     String mCurrentPhotoPath;
     String mCurrentVideoPath;
     private ArrayList<String> photos = null;
-    private ArrayList<String> videos = null;
     private int index = 0;
     public static final String EXTRA_MESSAGE = "com.example.PhotoGalleryApp.MESSAGE";
 //    public Button shareButton;
 //    public ImageView ima;
-
-
-
 
     class Weather extends AsyncTask<String, Void, String> { //First stream means URL, void is nothing, third string means return type will be String
 
@@ -94,12 +90,10 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
                 content = weather.execute("https://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=84b00d028b446f75b2dfcf13744a9964").get();
                 //First check data is retreived successfully
 
-
                 //JSON
                 JSONObject jsonObject = new JSONObject(content);
                 String weatherData = jsonObject.getString("weather");
                 String mainTemperature = jsonObject.getString("main"); //Temperature
-
 
                 //weather data is in array
                 JSONArray array = new JSONArray(weatherData);
@@ -120,8 +114,8 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
                 temp = temp - 273.15;
                 String temperatureCelcius = String.format("%.2f", temp);
 
-                fullWeather = "Main:" + main + "\nDescription: " + description + "\nTemperature: " + temperatureCelcius + "Celcius";
-
+//              fullWeather = "Main:" + main + "\nDescription:" + description + "\nTemperature:" + temperatureCelcius + "°C";
+                fullWeather = "Weather: " + description + "\nTemperature: " + temperatureCelcius + "°C";
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -166,6 +160,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
 
         setContentView(R.layout.activity_main);
         Weather displayWeather = new Weather();
+
 //        shareButton = (Button) findViewById((R.id.share));
 //        ima = (ImageView) findViewById(R.id.imageView);
 
@@ -183,12 +178,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
                 e.printStackTrace();
             }
         }
-//        shareButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v){
-//                    image();
-//            }
-//        });
-//        Debug.stopMethodTracing();
+
     }
 
 //    @Override
@@ -300,6 +290,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         TextView tv = (TextView) findViewById(R.id.Timestamp);
         TextView loc = (TextView) findViewById(R.id.Location);
         EditText et = (EditText) findViewById(R.id.Caption);
+        TextView weather = (TextView) findViewById(R.id.weather);
 
         if (path == null || path == "") {
             iv.setImageResource(R.mipmap.ic_launcher);
@@ -315,13 +306,14 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             tv.setText(d);
             et.setText(attr[1]);
             loc.setText(attr[4]);
+            weather.setText(attr[5]);
         }
     }
 
     private File createImageFile() throws IOException {
         // Create an image file name
         TextView loc = (TextView) findViewById(R.id.Location);
-        TextView weatherDisplay = findViewById(R.id.weather);
+        TextView weatherDisplay = (TextView) findViewById(R.id.weather);
         String location = loc.getText().toString();
         String weather = weatherDisplay.getText().toString();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -348,7 +340,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     private void updatePhoto(String path, String caption,String latLong,String weather) {
         String[] attr = path.split("_");
         if (attr.length >= 3) {
-            File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ latLong+"_"+weather+"_"+attr[6]);
+            File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ latLong+"_"+ weather+"_"+attr[6]);
             File from = new File(path);
             from.renameTo(to);
             mCurrentPhotoPath = to.getAbsolutePath();
@@ -480,7 +472,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         Weather displayWeather = new Weather();
         String weather = displayWeather.searchWeather(cityName);
         weatherDisplay.setText(weather);
-        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString(),weather);
+        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString(),((TextView) findViewById(R.id.weather)).getText().toString());
         return;
     }
 

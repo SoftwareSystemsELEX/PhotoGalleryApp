@@ -40,15 +40,15 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="173dp"
-        android:layout_height="322dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_width="181dp"
+        android:layout_height="320dp"
         android:layout_marginTop="4dp"
         android:adjustViewBounds="false"
         android:contentDescription="@string/app_name"
         android:cropToPadding="false"
         android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.965"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/win_20201110_18_20_11_pro"
@@ -83,20 +83,22 @@
         android:id="@+id/Location"
         android:layout_width="167dp"
         android:layout_height="48dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="19dp"
-        android:layout_marginRight="19dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="1dp"
         android:text="@string/locationField"
+        app:layout_constraintBottom_toTopOf="@+id/weather"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <TextView
         android:id="@+id/weather"
-        android:layout_width="169dp"
-        android:layout_height="109dp"
-        android:layout_marginTop="9dp"
-        android:layout_marginEnd="19dp"
-        android:layout_marginRight="19dp"
+        android:layout_width="168dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:text="weather"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Location" />
@@ -116,10 +118,10 @@
         android:src="@drawable/camera"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.331"
+        app:layout_constraintHorizontal_bias="0.344"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Caption"
-        app:layout_constraintVertical_bias="0.46" />
+        app:layout_constraintVertical_bias="0.386" />
 
     <ImageButton
         android:id="@+id/recordButton"
@@ -133,13 +135,13 @@
         android:cropToPadding="true"
         android:onClick="takeVideo"
         android:scaleType="centerCrop"
-        android:src="@drawable/camera"
+        android:src="@drawable/record"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.678"
+        app:layout_constraintHorizontal_bias="0.691"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Caption"
-        app:layout_constraintVertical_bias="0.46" />
+        app:layout_constraintVertical_bias="0.386" />
 
     <EditText
         android:id="@+id/Caption"
@@ -147,7 +149,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginLeft="100dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="68dp"
         android:layout_marginEnd="100dp"
         android:layout_marginRight="100dp"
         android:autofillHints=""
@@ -156,6 +158,7 @@
         android:inputType="textPersonName"
         android:text=""
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weather" />
 
@@ -183,12 +186,12 @@
 
     <VideoView
         android:id="@+id/videoView"
-        android:layout_width="201dp"
-        android:layout_height="324dp"
+        android:layout_width="203dp"
+        android:layout_height="321dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
