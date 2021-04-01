@@ -9,45 +9,47 @@ import androidx.core.content.FileProvider;
 //import android.Manifest;
 import android.annotation.SuppressLint;
 //import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 //import android.content.pm.PackageManager;
 //import android.graphics.Bitmap;
-import android.graphics.Bitmap;
+//import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 //import android.graphics.drawable.BitmapDrawable;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
+//import android.graphics.Canvas;
+//import android.graphics.Color;
+//import android.graphics.Paint;
+//import android.graphics.Point;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
+//import android.os.Debug;
 import android.os.Environment;
 //import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.util.SparseArray;
+//import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 //import com.google.android.gms.location.FusedLocationProviderClient;
 //import com.google.android.gms.location.LocationServices;
 //import com.google.android.gms.tasks.Task;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 //import java.io.FileOutputStream;
-import java.io.IOError;
+//import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -63,39 +65,42 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity  implements LocationListener {
     public LocationManager locationManager;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int SEARCH_ACTIVITY_REQUEST_CODE = 2;
+    private static int REQUEST_VIDEO_CAPTURE = 100;
     String mCurrentPhotoPath;
+    String mCurrentVideoPath;
     private ArrayList<String> photos = null;
+    private ArrayList<String> videos = null;
     private int index = 0;
     public static final String EXTRA_MESSAGE = "com.example.PhotoGalleryApp.MESSAGE";
-    public Button shareButton;
-    public ImageView ima;
-    TextView weatherDisplay;
+//    public Button shareButton;
+//    public ImageView ima;
+
+
 
 
     class Weather extends AsyncTask<String, Void, String> { //First stream means URL, void is nothing, third string means return type will be String
 
-        public void searchWeather(String location){
+        public String searchWeather(String location){
             String content;
             Weather weather = new Weather();
-            weatherDisplay = findViewById(R.id.weather);
-
+            TextView weatherDisplay = findViewById(R.id.weather);
+            String fullWeather="";
             try {
                 content = weather.execute("https://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=84b00d028b446f75b2dfcf13744a9964").get();
                 //First check data is retreived successfully
-                Log.i("content", content);
+
 
                 //JSON
                 JSONObject jsonObject = new JSONObject(content);
                 String weatherData = jsonObject.getString("weather");
                 String mainTemperature = jsonObject.getString("main"); //Temperature
 
-                Log.i("weatherData", weatherData);
+
                 //weather data is in array
                 JSONArray array = new JSONArray(weatherData);
 
@@ -115,17 +120,12 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
                 temp = temp - 273.15;
                 String temperatureCelcius = String.format("%.2f", temp);
 
-
-                Log.i("main", main);
-                Log.i("description", description);
-                weatherDisplay.setText("Main:" + main + "\nDescription: " + description + "\nTemperature: " + temperatureCelcius + "Celcius");
+                fullWeather = "Main:" + main + "\nDescription: " + description + "\nTemperature: " + temperatureCelcius + "Celcius";
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
-
+            return fullWeather;
         }
         @Override
         protected String doInBackground(String... address) {
@@ -161,15 +161,13 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        Debug.startMethodTracing("onCreate");
+//      Debug.startMethodTracing("onCreate");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
         Weather displayWeather = new Weather();
-        displayWeather.searchWeather("London");
-
-        shareButton = (Button) findViewById((R.id.share));
-        ima = (ImageView) findViewById(R.id.imageView);
+//        shareButton = (Button) findViewById((R.id.share));
+//        ima = (ImageView) findViewById(R.id.imageView);
 
         photos = findPhotos(new Date(Long.MIN_VALUE), new Date(), "","","");
         if (photos.size() == 0) {
@@ -185,11 +183,11 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
                 e.printStackTrace();
             }
         }
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v){
-                    image();
-            }
-        });
+//        shareButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v){
+//                    image();
+//            }
+//        });
 //        Debug.stopMethodTracing();
     }
 
@@ -212,7 +210,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     }
 
     public void takePhoto(View v) {
-        Debug.startMethodTracing("takePhoto");
+//        Debug.startMethodTracing("takePhoto");
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
         File photoFile = null;
@@ -230,20 +228,32 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         //}
     }
 
+    public void takeVideo(View v) {
+//        Debug.startMethodTracing("takePhoto");
+        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        //if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+        File videoFile = null;
+        try {
+            videoFile = createVideoFile();
+        } catch (IOException ex) {
+            // Error occurred while creating the File
+        }
+        // Continue only if the File was successfully created
+        if (videoFile != null) {
+            //Uri videoURI = Uri.fromFile(videoFile);
+            //takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoURI);
+            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+        }
+        //}
+    }
+
 
 //
 //    protected void onDraw(Canvas canvas){
 //        canvas.drawColor(Color.WHITE);
 //        Paint p = new Paint();
 //        float y = 10;
-//        SparseArray<String> sparseArrayapp
-//build.gradle
-//gradle
-//gradle.properties
-//gradlew
-//gradlew.bat
-//PhotoGalleryApp.plantuml
-//settings.gradle = new SparseArray<>();
+//        SparseArray<String> sparseArray = new SparseArray<>();
 //    }
 
 
@@ -266,7 +276,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     }
 
     public void scrollPhotos(View v) throws ParseException {
-        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString());
+        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString(),((TextView) findViewById(R.id.weather)).getText().toString());
         switch (v.getId()) {
             case R.id.Left:
                 if (index > 0) {
@@ -305,30 +315,64 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             tv.setText(d);
             et.setText(attr[1]);
             loc.setText(attr[4]);
-
         }
     }
 
     private File createImageFile() throws IOException {
         // Create an image file name
         TextView loc = (TextView) findViewById(R.id.Location);
+        TextView weatherDisplay = findViewById(R.id.weather);
         String location = loc.getText().toString();
+        String weather = weatherDisplay.getText().toString();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName ="_CAPTION_" + timeStamp + "_" + location +"_";
+        String imageFileName ="_CAPTION_" + timeStamp + "_" + location +"_"+ weather+"_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg",storageDir);
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
-    private void updatePhoto(String path, String caption,String latLong) {
+
+    private File createVideoFile() throws IOException {
+        //Create Movie File Path
+        TextView loc = (TextView) findViewById(R.id.Location);
+        TextView weatherDisplay = findViewById(R.id.weather);
+        String location = loc.getText().toString();
+        String weather = weatherDisplay.getText().toString();
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String videoFileName ="_CAPTION_" + timeStamp + "_" + location +"_"+ weather+"_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_MOVIES);
+        File video = File.createTempFile(videoFileName, ".mp4",storageDir);
+        mCurrentVideoPath = video.getAbsolutePath();
+        return video;
+    }
+    private void updatePhoto(String path, String caption,String latLong,String weather) {
         String[] attr = path.split("_");
         if (attr.length >= 3) {
-            File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ latLong+"_"+attr[5]);
+            File to = new File(attr[0]+"_"+caption + "_" + attr[2] + "_" + attr[3]+ "_"+ latLong+"_"+weather+"_"+attr[6]);
             File from = new File(path);
             from.renameTo(to);
             mCurrentPhotoPath = to.getAbsolutePath();
             Collections.replaceAll(photos,from.getAbsolutePath(),mCurrentPhotoPath);
         }
+    }
+
+
+    public void deletePhoto(View v) throws ParseException {
+        ImageView iv = (ImageView) findViewById(R.id.imageView);
+        View snap= findViewById(R.id.imageButton);
+        String photo = photos.get(index);
+        File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File deleteFile = new File(photo);
+        boolean deleted = deleteFile.delete();
+        photos.remove(index);
+        if(photos.size()>0)
+            displayPhoto(photos.get(index));
+        else{
+            displayPhoto(null);
+//            snap.performClick();
+
+        }
+
     }
 
     @Override
@@ -378,11 +422,18 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            Debug.stopMethodTracing();
+//            Debug.stopMethodTracing();
+        }
+
+        if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
+
+            VideoView videoView = (VideoView) findViewById(R.id.videoView);
+            videoView.setVideoURI(data.getData());
+            videoView.seekTo(1);
+
         }
     }
-    private void image(){
-
+    public void share(View v){
         String PACKAGE_NAME = "com.google.android.gm";
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("image/*");
@@ -399,7 +450,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     @SuppressLint("MissingPermission")
     private void getLocation() {
         try{
-            locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, MainActivity.this);
         }catch(Exception e){
             e.printStackTrace();
@@ -408,10 +459,28 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     @Override
     public void onLocationChanged(Location location) {
         TextView loc = (TextView) findViewById(R.id.Location);
+        TextView weatherDisplay = findViewById(R.id.weather);
         double lat = location.getLatitude(),lon = location.getLongitude();
-        String strLat = String. format("%.2f", lat),strLon = String. format("%.2f", lon);
-        loc.setText("Lat:"+ strLat + " Long:" + strLon);
-        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString());
+
+        String cityName = null;
+        Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = gcd.getFromLocation(lat,
+                    lon, 1);
+            if (addresses.size() > 0) {
+//                System.out.println(addresses.get(0).getLocality());
+                cityName = addresses.get(0).getLocality();
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        loc.setText("City: "+ cityName);
+        Weather displayWeather = new Weather();
+        String weather = displayWeather.searchWeather(cityName);
+        weatherDisplay.setText(weather);
+        updatePhoto(photos.get(index), ((EditText) findViewById(R.id.Caption)).getText().toString(),((TextView) findViewById(R.id.Location)).getText().toString(),weather);
         return;
     }
 
