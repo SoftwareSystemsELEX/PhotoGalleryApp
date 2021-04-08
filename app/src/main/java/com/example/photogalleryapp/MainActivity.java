@@ -190,11 +190,23 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
 
     /** Called when the user tap    1s the Send button */
     public void search(View view) {
-
         // Do something in response to button
         Intent intent = new Intent(this, SearchActivity.class);
         startActivityForResult(intent, SEARCH_ACTIVITY_REQUEST_CODE);
     }
+
+
+    public void record(View view) {
+        // Do something in response to button
+        Intent intent = new Intent(this, VideoCapture.class);
+        startActivity(intent);
+    }
+
+
+
+
+
+
 
     public void takePhoto(View v) {
 //        Debug.startMethodTracing("takePhoto");
@@ -311,7 +323,6 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             Collections.replaceAll(photos,from.getAbsolutePath(),mCurrentPhotoPath);
         }
     }
-
 
     public void deletePhoto(View v) throws ParseException {
         ImageView iv = (ImageView) findViewById(R.id.imageView);
