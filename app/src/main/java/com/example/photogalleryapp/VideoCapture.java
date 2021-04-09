@@ -36,8 +36,6 @@ public class VideoCapture extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.activity_video);
         videos = findVideos();
         if (videos.size() == 0) {
@@ -53,8 +51,8 @@ public class VideoCapture extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        
     }
+
     public void scrollVideos(View v) throws ParseException {
         switch (v.getId()) {
             case R.id.videoLeft:
@@ -72,7 +70,6 @@ public class VideoCapture extends AppCompatActivity {
         }
         displayVideo(videos.get(index));
     }
-
     private void displayVideo(String path) throws ParseException {
 
         VideoView videoView = (VideoView) findViewById(R.id.videoView);
