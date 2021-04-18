@@ -86,7 +86,6 @@ public class VideoCapture extends AppCompatActivity {
         }
     }
 
-
     public void takeVideo(View v) {
 //        Debug.startMethodTracing("takePhoto");
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);

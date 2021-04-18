@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
 
                 JSONObject mainPart = new JSONObject(mainTemperature);
                 temperatureKelvin = mainPart.getString("temp");
-                Double temp = new Double(temperatureKelvin);
+                Double temp = Double.valueOf(temperatureKelvin);
                 temp = temp - 273.15;
                 String temperatureCelcius = String.format("%.2f", temp);
 
@@ -184,9 +184,6 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
 //        super.onStop();
 //    }
 //
-
-
-
 
     /** Called when the user tap    1s the Send button */
     public void search(View view) {

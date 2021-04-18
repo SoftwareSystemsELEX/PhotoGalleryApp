@@ -5,17 +5,18 @@ title __PHOTOGALLERYAPP's Class Diagram__\n
   namespace com.example.photogalleryapp {
     class com.example.photogalleryapp.MainActivity {
         {static} + EXTRA_MESSAGE : String
-        + ima : ImageView
         + locationManager : LocationManager
-        + shareButton : Button
-        {static} ~ REQUEST_IMAGE_CAPTURE : int
+        {static} ~ SEARCH_ACTIVITY_REQUEST_CODE : int
         ~ mCurrentPhotoPath : String
-        {static} - SEARCH_ACTIVITY_REQUEST_CODE : int
+        {static} - REQUEST_IMAGE_CAPTURE : int
         - index : int
         - photos : ArrayList<String>
+        + deletePhoto()
         + onLocationChanged()
+        + record()
         + scrollPhotos()
         + search()
+        + share()
         + takePhoto()
         # onActivityResult()
         # onCreate()
@@ -23,8 +24,26 @@ title __PHOTOGALLERYAPP's Class Diagram__\n
         - displayPhoto()
         - findPhotos()
         - getLocation()
-        - image()
         - updatePhoto()
+    }
+  }
+  
+
+  namespace com.example.photogalleryapp {
+    class com.example.photogalleryapp.MainActivity.Weather {
+        + searchWeather()
+        # doInBackground()
+    }
+  }
+  
+
+  namespace com.example.photogalleryapp {
+    class com.example.photogalleryapp.PasswordPrompt {
+        {static} + EXTRA_MESSAGE : String
+        ~ encryted_password : String
+        {static} + getSHA()
+        {static} + toHexString()
+        # onCreate()
     }
   }
   
@@ -38,9 +57,30 @@ title __PHOTOGALLERYAPP's Class Diagram__\n
   }
   
 
+  namespace com.example.photogalleryapp {
+    class com.example.photogalleryapp.VideoCapture {
+        ~ mCurrentVideoPath : String
+        {static} - REQUEST_VIDEO_CAPTURE : int
+        - index : int
+        - videos : ArrayList<String>
+        + scrollVideos()
+        + takeVideo()
+        # onActivityResult()
+        # onCreate()
+        - createVideoFile()
+        - displayVideo()
+        - findVideos()
+    }
+  }
+  
+
   com.example.photogalleryapp.MainActivity .up.|> android.location.LocationListener
   com.example.photogalleryapp.MainActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.photogalleryapp.MainActivity +-down- com.example.photogalleryapp.MainActivity.Weather
+  com.example.photogalleryapp.MainActivity.Weather -up-|> android.os.AsyncTask
+  com.example.photogalleryapp.PasswordPrompt -up-|> androidx.appcompat.app.AppCompatActivity
   com.example.photogalleryapp.SearchActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.photogalleryapp.VideoCapture -up-|> androidx.appcompat.app.AppCompatActivity
 
 
 right footer

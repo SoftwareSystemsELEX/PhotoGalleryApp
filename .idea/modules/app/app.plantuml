@@ -15,14 +15,28 @@ title __PHOTOGALLERYAPP.APP's Class Diagram__\n
   
 
   namespace com.example.photogalleryapp {
+    class com.example.photogalleryapp.PasswordPrompt {
+    }
+  }
+  
+
+  namespace com.example.photogalleryapp {
     class com.example.photogalleryapp.SearchActivity {
+    }
+  }
+  
+
+  namespace com.example.photogalleryapp {
+    class com.example.photogalleryapp.VideoCapture {
     }
   }
   
 
   com.example.photogalleryapp.MainActivity .up.|> android.location.LocationListener
   com.example.photogalleryapp.MainActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.photogalleryapp.PasswordPrompt -up-|> androidx.appcompat.app.AppCompatActivity
   com.example.photogalleryapp.SearchActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.photogalleryapp.VideoCapture -up-|> androidx.appcompat.app.AppCompatActivity
 
 
 right footer
